@@ -9,9 +9,11 @@ int nearestFibonacci(int n){
         b=c;
     }
 
-    if ( n-a < n-c){
-        return c;
-    }else {return a;}
+    if ( n ==b){
+        return n;
+    }else if ( abs(n-a) < abs(n-b)){
+        return a;
+    }else {return b;}
 }
 
 int updateHP (int hp){

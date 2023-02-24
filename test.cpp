@@ -13,9 +13,11 @@ int nearestFibonacci(int n){
         b=c;
     }
 
-    if ( n-a < n-c){
-        return c;
-    }else {return a;}
+    if ( n ==b){
+        return n;
+    }else if ( abs(n-a) < abs(n-b)){
+        return a;
+    }else {return b;}
 }
 
 int updateHP (int hp){
@@ -56,14 +58,14 @@ int secondMaxInSequence(int *newNumber)
         secondMaxx = newNumber[0];
     }
 
-    if ((newNumber[1] > newNumber[0] && newNumber[1] < newNumber[2]) ||
+    else if ((newNumber[1] > newNumber[0] && newNumber[1] < newNumber[2]) ||
         (newNumber[1] < newNumber[0] && newNumber[1] > newNumber[2]))
     {
         secondMaxx = newNumber[1];
         second_pos = 1;
     }
 
-    if ((newNumber[2] > newNumber[0] && newNumber[2] < newNumber[1]) ||
+    else if ((newNumber[2] > newNumber[0] && newNumber[2] < newNumber[1]) ||
         (newNumber[2] < newNumber[0] && newNumber[2] > newNumber[1]))
     {
         secondMaxx = newNumber[2];
@@ -302,15 +304,25 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
 
     fstream ifs;
     ifs.open("tc1_input", ios::in);
-    //! line 1
+    //! line 1 🤣
     string line;
     getline(ifs, line);
     stringstream ss(line);
     ss >> HP >> level >> remedy >> maidenkiss >> phoenixdown;
+
     //?line 2
     string line2;
     getline(ifs, line2);
     stringstream ss2(line2);
+
+    //! line 3
+    string line3;
+    getline(ifs, line3);
+    stringstream ss3(line3);
+    string pack1, pack2, pack3;
+    getline(ss3, pack1, ',');
+    getline(ss3, pack2, ',');
+    getline(ss3, pack3);
     int MarkMerlin = 0;
     int MarkAclepius = 0;
     int MaxHP = HP;
@@ -323,11 +335,21 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     int i = 1;
     while (ss2 >> KoopaEvent)
     {
-        if (KoopaEvent == "0")
+        if (KoopaEvent == "0" || MaxHP ==999)
         {
             rescue = 1;
             break;
         }
+        else if( KoopaEvent =="99"){
+            if ( (isPrime(HP) && level==8) || (level==10))
+            {level =10;
+            }
+            else 
+            {
+                HP =-1;
+                break;
+            }
+         }   
         else if (KoopaEvent == "17")
         {
             if (phoenixdown >= 0 && phoenixdown < 100)
@@ -490,44 +512,36 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
         }
         else if (checkMushGosh(KoopaEvent) || KoopaEvent == "18" || KoopaEvent == "19")
         {
-            //! line 3
-            string line3;
-            getline(ifs, line3);
-            stringstream ss3(line3);
-            string pack1, pack2, pack3;
-            getline(ss3, pack1, ',');
-            getline(ss3, pack2, ',');
-            getline(ss3, pack3);
+            ifstream ifss;
+            
 
-            if (pack1 == "tc1_mush_ghost" && checkMushGosh(KoopaEvent))
+            if (checkMushGosh(KoopaEvent))
             {
+                
+
                 int len = KoopaEvent.length();
                 string num = ExtractMush(KoopaEvent, len);
                 int lenNum = num.length();
                 for (int i = 0; i < lenNum; i++)
                 {
                     int digit = num[i] - '0';
-                    int numm = numElementss("tc1_mush_ghost");
+                    int numm = numElementss(pack1);
                     int *N = new int[numm];
-                    N = ExtractNumMush("tc1_mush_ghost");
+                    N = ExtractNumMush(pack1);
 
                     if (digit == 1)
                     {
-
                         int results = sumMinMaxPosition(N, numm);
                         HP = HP - results;
                     }
-
                     if (digit == 2)
                     {
-
                         int summit_pos = MaxPosInSequence(N, numm);
                         int summit_value = MaxValueInSequence(N, numm);
                         HP = HP - (summit_pos + summit_value);
                     }
                     if (digit == 3)
                     {
-
                         int results = ModifiedSequence(N, numm);
                         HP = HP - results;
                     }
@@ -540,10 +554,10 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                     }
                 }
             }
-            else if (pack2 == "tc1_aclepius_pack" && KoopaEvent == "19" && MarkAclepius != 1)
+            else if ( KoopaEvent == "19" && MarkAclepius != 1)
             {
                 ifstream ifs;
-                ifs.open("tc1_aclepius_pack", ios::in);
+                ifs.open(pack2, ios::in);
                 int MarkCount = 0;
 
                 //! line 1
@@ -587,10 +601,10 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                 }
                 MarkAclepius++;
             }
-            else if (pack2 == "tc1_merlin_pack" && KoopaEvent == "18" && MarkMerlin != 1)
+            else if ( KoopaEvent == "18" && MarkMerlin != 1)
             {
                 ifstream ifs;
-                ifs.open("tc1_merlin_pack");
+                ifs.open(pack3);
 
                 //!Line 1
                 string line;
@@ -625,12 +639,8 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                             }
                         }
                     }
-
-
                 }
-
-                MarkMerlin =1;
-                        
+                MarkMerlin =1;                      
         }
         else if (KoopaEvent =="11"){
             int n1=((level + phoenixdown)%5+1)*3;
@@ -676,8 +686,10 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     {
         rescue = 0;
     }
-    display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
+    
     }
+
+    display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
 }
 
 int main(int argc, char **argv)
@@ -689,4 +701,6 @@ int main(int argc, char **argv)
 
     return 0;
 }
+
+
 
