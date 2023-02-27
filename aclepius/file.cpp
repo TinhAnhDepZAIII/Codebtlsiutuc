@@ -7,14 +7,11 @@
 using namespace std;
 
 int main(){
-    int remedy=1;
+    int remedy=98;
     int phoenixdown =1;
     int maidenkiss=1;
 
-    int MarkRemedy= 0;
-    int MarkPhoenix=0;
-    int MarkMaidenKiss=0;
-
+    
     ifstream ifs;
     ifs.open("file.txt", ios::in);
 
@@ -30,29 +27,35 @@ int main(){
     stringstream ss2(line2);
     int N2;
     ss2>>N2;
-
+    int CountPotion=0;
 
     for ( int i=0; i<N1; i++){
         string lineFollowing;
         getline(ifs, lineFollowing);
         stringstream ssFollow(lineFollowing);
         int NN;
+        
         while(ssFollow >> NN){
-            if( NN==16 && MarkRemedy !=1){
+            
+            if( NN==16 && CountPotion <3 && remedy<99){
                 remedy ++;
-                MarkRemedy=1;
+                CountPotion++;
                 
             }
-            else if(NN==17 && MarkMaidenKiss !=1){
+            else if(NN==17 && CountPotion <3 && maidenkiss <99){
                 maidenkiss ++;
-                MarkMaidenKiss=1;
+                CountPotion++;
+               
 
-            } else if ( NN==18 && MarkPhoenix !=1){
+            } else if ( NN==18 && CountPotion <3 &&phoenixdown<99){
                 phoenixdown++;
-                MarkPhoenix =1;
+                CountPotion++;
+               
 
             }
+           
         }
+         CountPotion =0;
     }
     cout<<remedy<<maidenkiss<<phoenixdown;
     ifs.close();

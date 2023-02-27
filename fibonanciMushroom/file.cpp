@@ -25,7 +25,7 @@ int updateHP (int hp){
 }
 
 int main(){
-    int hp =10;
+    int hp =100;
     hp = updateHP(hp);
     cout<<hp;
 
