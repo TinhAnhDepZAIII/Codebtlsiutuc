@@ -7,15 +7,25 @@ using namespace std;
 
 
 bool ContainMerlin(string s) {
-    for (int i = 0; i < 6; i++) {
-        if (tolower(s[i]) == 'm' &&
-            tolower(s[i+1]) == 'e' &&
-            tolower(s[i+2]) == 'r' &&
-            tolower(s[i+3]) == 'l' &&
-            tolower(s[i+4]) == 'i' &&
-            tolower(s[i+5]) == 'n') {
-                return true;
-        }
+    // for (int i = 0; i < 6; i++) {
+    //     if (tolower(s[i]) == 'm' &&
+    //         tolower(s[i+1]) == 'e' &&
+    //         tolower(s[i+2]) == 'r' &&
+    //         tolower(s[i+3]) == 'l' &&
+    //         tolower(s[i+4]) == 'i' &&
+    //         tolower(s[i+5]) == 'n') {
+    //             return true;
+    //     }
+    // }
+    // return false;
+    int len = s.length();
+    for( int i=0; i < len ;i++){
+        s[i] = tolower(s[i]);
+    }
+    string merlinn="merlin";
+    size_t findMerlin = s.find(merlinn);
+    if ( findMerlin != string::npos){
+        return true;
     }
     return false;
 }
@@ -47,7 +57,7 @@ int main() {
         size_t t2 = N.find(s2);
         if ( (t1 != string::npos) || (t2!= string::npos)){
             HP +=3;
-        }else if(len >=6){
+        }else if(ContainMerlin(N)){
             HP +=2;
         }
     }
