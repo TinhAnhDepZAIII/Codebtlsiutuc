@@ -94,47 +94,56 @@ int ModifiedSequence(char numbers[], int num_elements)
 int MaxPosValueInSequence(char numbers[], int num_elemnts)
 {
 
-    int summit_pos = 0;
-    int summit_value = 0;
-    int initial = numbers[0];
-    int countLegit = 0;
-    int notGoDownHill = 0;
+    int peak_pos = -3; // initialize to default values
+    int peak_value = -2;
 
-    for (int i = 1; i < num_elemnts; i++)
+    // look for the peak
+    for (int i = 0; i < num_elements; i++)
     {
+        if (i == 0 && numbers[i] > numbers[i+1]) {
+            // peak at beginning of sequence
+            peak_pos = i;
+            peak_value = numbers[i];
+            break;
+        } else if (i == num_elements-1 && numbers[i] > numbers[i-1]) {
+            // peak at end of sequence
+            peak_pos = i;
+            peak_value = numbers[i];
+            break;
+        } else if (i > 0 && i < num_elements-1 && numbers[i] > numbers[i-1] && numbers[i] > numbers[i+1]) {
+            // peak in middle of sequence
+            peak_pos = i;
+            peak_value = numbers[i];
+            break;
+        }
+    }
 
-        if (numbers[i] > initial)
-        {
-            initial = numbers[i];
-            summit_pos = i;
-            summit_value = numbers[i];
-            notGoDownHill = 1;
-            if (countLegit == 1)
-            {
-
-                summit_pos = -3;
-                summit_value = -2;
+    // check if sequence has mountain shape
+    if (peak_pos == -3 || peak_pos == 0 || peak_pos == num_elements-1) {
+        // no mountain shape or peak at beginning/end of sequence
+        peak_pos = -3;
+        peak_value = -2;
+    } else {
+        // check if sequence strictly increases before peak and strictly decreases after peak
+        int i;
+        for (i = 0; i < peak_pos; i++) {
+            if (numbers[i] >= numbers[i+1]) {
                 break;
             }
         }
-        else if (numbers[i] == initial)
-        {
+        for (; i < num_elements-1; i++) {
+            if (numbers[i] <= numbers[i+1]) {
+                break;
+            }
         }
-        else
-        {
-            if (notGoDownHill)
-            {
-                initial = numbers[i];
-                countLegit = 1;
-            }
-            else
-            {
-                summit_pos = 0;
-                summit_value = initial;
-            }
+        if (i < num_elements-1) {
+            // sequence does not have mountain shape
+            peak_pos = -3;
+            peak_value = -2;
         }
     }
-    return summit_pos + summit_value;
+
+    return peak_pos + peak_value;
 }
 // int MaxValueInSequence(int *numbers, int num_elements)
 // {
