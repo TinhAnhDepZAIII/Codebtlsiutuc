@@ -492,6 +492,8 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                         if (HP <= 0 && phoenixdown == 0)
                         {
                             rescue = 0;
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
+                            break;
                         }
                         else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
                         {
@@ -499,12 +501,13 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                             HP = MaxHP;
                             tinySmall = 0;
                         }
-                        else if (HP < 0 && phoenixdown != 0)
+                        else if (HP <= 0 && phoenixdown != 0)
                         {
                             phoenixdown -= 1;
                             HP = MaxHP;
                         }
                     }
+                    if(HP<=0){break;}
                 }
                 else if( KoopaEvent=="15"){
                     if (TinyFormCheck(i, tinySmall))
@@ -681,12 +684,13 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                 }
                 else
                 {
-                    if(HP<=5){HP=1;}
-                    else {HP=HP/5;}
-                    if (remedy>0){
-                        HP=HP*5;
+                    if(remedy >0){
                         remedy--;
                         tinySmall=0;
+                    }else if(HP<=5){
+                        HP=1;
+                    }else {
+                        HP=HP/5;
                     }
                 }
             }
@@ -737,7 +741,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
         }
         if ( HP<0 || i-countEvent-1==0){
             if ( HP<0){
-                rescue=-1;
+                rescue=0;
             }
             else if (i-countEvent-1==0){
                 rescue=1;
@@ -749,6 +753,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
         display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
 
     }
+    ifs.close();
 }
 
 int main(int argc, char **argv)
