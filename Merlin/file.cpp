@@ -18,16 +18,7 @@ bool ContainMerlin(string s) {
     //     }
     // }
     // return false;
-    int len = s.length();
-    for( int i=0; i < len ;i++){
-        s[i] = tolower(s[i]);
-    }
-    string merlinn="merlin";
-    size_t findMerlin = s.find(merlinn);
-    if ( findMerlin != string::npos){
-        return true;
-    }
-    return false;
+    x`
 }
 
 

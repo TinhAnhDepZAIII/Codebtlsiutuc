@@ -392,12 +392,10 @@ void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int
          << ", phoenixdown=" << phoenixdown
          << ", rescue=" << rescue << endl;
 }
-
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
-
     fstream ifs;
-    ifs.open("tc1_input", ios::in);
+    ifs.open(file_input, ios::in);
     //! line 1 🤣
     string line;
     getline(ifs, line);
@@ -427,6 +425,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     int MarkMerlin = 0;
     int MarkAclepius = 0;
     int MaxHP = HP;
+    int InitialLevel=level;
     int tinySmall = 0;
 
     int turnFrog = 0;
@@ -435,412 +434,329 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     int i = 1;
     while (ss2 >> KoopaEvent)
     {
-
-        if (KoopaEvent == "99")
-        {
-            if ((isPrime(HP) && level >= 8) || (level == 10))
-            {
-                level = 10;
-            }
-            else
-            {
-                HP = -1;
-            }
+        if(KoopaEvent=="0"){
+            rescue =1;
+            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
+            break;
         }
-
-        else if ((KoopaEvent == "0") || (MaxHP == 999) || (isPrime(MaxHP)))
-        {
-            rescue = 1;
-        }
-
-        else if (KoopaEvent == "17")
-        {
-            if (phoenixdown >= 0 && phoenixdown < 99)
-            {
-                phoenixdown++;
-            }
-            
-        }
-
-        else if (KoopaEvent == "15")
-        {
-            if (TinyFormCheck(i, tinySmall))
-            {
-                HP = HP * 5;
-                tinySmall =0;
-                if (HP > MaxHP)
-                    HP = MaxHP;
-            }
-            else if (remedy >= 0 && remedy < 99)
-            {
-                remedy++;
-            }
-        }
-        else if (KoopaEvent == "16")
-        {
-            if (TinyFormCheck(i, turnFrog))
-            {
-                level = CurrentLevell;
-            }
-            else if (maidenkiss >= 0 && maidenkiss < 99)
-            {
-                maidenkiss++;
-            }
-        }
-
-        else if (KoopaEvent == "1" || KoopaEvent == "2" || KoopaEvent == "3" || KoopaEvent == "4" || KoopaEvent == "5")
-        {
-
-            ComBat(level, HP, i, KoopaEvent);
-
-            if (HP <= 0 && phoenixdown == 0)
-            {
-                rescue = 0;
-            }
-            else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
-            {
-                phoenixdown--;
-                HP = MaxHP;
-                tinySmall = 0;
-            }
-            else if (HP < 0 && phoenixdown != 0)
-            {
-                phoenixdown -= 1;
-                HP = MaxHP;
-            }
-        }
-        else if (KoopaEvent == "6" && (!TinyFormCheck(i, tinySmall) || !FrogFormCheck(i, turnFrog)))
-        {
-            tinySmall = i;
-
-            int b = i % 10;
-            int levelO = i > 6 ? (b > 5 ? b : 5) : b;
-            if (level > levelO)
-            {
-                if (level == 10)
-                {
-                }
-                else
-                {
-                    level += 2;
-                }
-            }
-            else if (level == levelO)
-            {
-            }
-            else
-            {
-                if (remedy >= 1)
-                {
-                    remedy--;
+        if ( KoopaEvent =="11" || KoopaEvent =="12" || checkMushGosh(KoopaEvent) || KoopaEvent=="15" || KoopaEvent=="16"|| KoopaEvent=="17" || KoopaEvent=="18" || KoopaEvent =="19"){
+            if(KoopaEvent=="11"){
+                    int n1 = ((level + phoenixdown) % 5 + 1) * 3;
+                    int s1 = calcS1(n1);
+                    HP += s1 % 100;
+                    while (!isPrime(HP))
+                    {
+                        HP++;
+                    }
+                    if (HP > MaxHP)
+                    {
+                        HP = MaxHP;
+                    }
+                } 
+                else if (KoopaEvent=="12"){
+                    HP = updateHP(HP);
                     if (HP > MaxHP)
                     {
                         HP = MaxHP;
                     }
                 }
-                else
-                {
-                    if (HP <= 5)
+                else if (checkMushGosh(KoopaEvent)){
+                    int len = KoopaEvent.length();
+                    string num = ExtractMush(KoopaEvent, len);
+                    int lenNum = num.length();
+                    for (int j = 0; j < lenNum;j++)
                     {
-                        HP = 1;
-                    }
-                    HP = HP / 5;
-                }
-            }
-        }
-        else if (KoopaEvent == "7" && (!TinyFormCheck(i, tinySmall) || !FrogFormCheck(i, turnFrog)))
-        {
-            turnFrog = i;
-
-            int b = i % 10;
-            int levelO = i > 6 ? (b > 5 ? b : 5) : b;
-            if (level > levelO)
-            {
-                if (level == 10 || level == 9 || level == 8)
-                {
-                }
-                else
-                {
-                    level += 2;
-                }
-            }
-            else if (level == levelO)
-            {
-            }
-            else
-            {
-                if (maidenkiss != 0)
-                {
-                    maidenkiss--;
-                }
-                else
-                {
-                    currentLevel(CurrentLevell, level);
-                    level = 1;
-                }
-            }
-        }
-        else if (checkMushGosh(KoopaEvent) || KoopaEvent == "18" || KoopaEvent == "19")
-        {
-            if (checkMushGosh(KoopaEvent))
-            {
-                int len = KoopaEvent.length();
-                string num = ExtractMush(KoopaEvent, len);
-                int lenNum = num.length();
-                for (int j = 0; j < lenNum;j++)
-                {
-                    int digit = num[j] - '0';
-                    int numm = numElementss(pack1);
-                    int N1[numm];
-                    ExtractNumMush(pack1, N1);
-                    if (digit == 1)
-
-                    {
-
-                        int results = sumMinMaxPosition(N1, numm);
-                        HP = HP -results;
-                    }
-
-                    if (digit == 2)
-                    {
-
-                        int summit_result = MaxPosValueInSequence(N1, numm);
-
-                        HP = HP -summit_result;
-                    }
-                    if (digit == 3)
-                    {
-
-                        int results = ModifiedSequence(N1, numm);
-                        HP = HP - results;
-                    }
-
-                    if (digit == 4)
-                    {
-                        HP = HP - ModifiedSequence2(N1, numm);
-
-                    }
-                    if (HP <= 0 && phoenixdown == 0)
-                    {
-                        rescue = 0;
-                    }
-                    else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
-                    {
-                        phoenixdown--;
-                        HP = MaxHP;
-                        tinySmall = 0;
-                    }
-                    else if (HP < 0 && phoenixdown != 0)
-                    {
-                        phoenixdown -= 1;
-                        HP = MaxHP;
+                        int digit = num[j] - '0';
+                        int numm = numElementss(pack1);
+                        int N1[numm];
+                        ExtractNumMush(pack1, N1);
+                        if (digit == 1)
+                        {
+                            int results = sumMinMaxPosition(N1, numm);
+                            HP = HP -results;
+                        }
+                        if (digit == 2)
+                        {
+                            int summit_result = MaxPosValueInSequence(N1, numm);
+                            HP = HP -summit_result;
+                        }
+                        if (digit == 3)
+                        {
+                            int results = ModifiedSequence(N1, numm);
+                            HP = HP - results;
+                        }
+                        if (digit == 4)
+                        {
+                            HP = HP - ModifiedSequence2(N1, numm);
+                        }
+                        if (HP <= 0 && phoenixdown == 0)
+                        {
+                            rescue = 0;
+                        }
+                        else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
+                        {
+                            phoenixdown--;
+                            HP = MaxHP;
+                            tinySmall = 0;
+                        }
+                        else if (HP < 0 && phoenixdown != 0)
+                        {
+                            phoenixdown -= 1;
+                            HP = MaxHP;
+                        }
                     }
                 }
-            }
-            else if (KoopaEvent == "19" && MarkAclepius != 1)
-            {
-                ifstream ifs;
-                ifs.open(pack2, ios::in);
-
-                //! line 1
-                string line1;
-                getline(ifs, line1);
+                else if( KoopaEvent=="15"){
+                    if (TinyFormCheck(i, tinySmall))
+                    {
+                        HP = HP * 5;
+                        tinySmall =0;
+                        if (HP > MaxHP)
+                            HP = MaxHP;
+                    }
+                    else if (remedy >= 0 && remedy < 99)
+                    {
+                        remedy++;
+                    }
+                }
+                else if (KoopaEvent=="16"){
+                    if (TinyFormCheck(i, turnFrog))
+                    {
+                        level = CurrentLevell;
+                        turnFrog=0;
+                    }
+                    else if (maidenkiss >= 0 && maidenkiss < 99)
+                    {
+                        maidenkiss++;
+                    }
+                }
+                else if(KoopaEvent=="17"){
+                    if (phoenixdown >= 0 && phoenixdown < 99)
+                    {
+                        phoenixdown++;
+                    }
+                }
+                else if (KoopaEvent == "18" && MarkMerlin != 1){
+                    ifstream ifs;
+                    ifs.open(pack3);
+                    //! Line 1
+                    string linee;
+                    getline(ifs, linee);
+                    stringstream ss(linee);
+                    int N1;
+                    ss >> N1;
+                        for (int j = 0; j < N1; j++)
+                        {
+                            string lineFo;
+                            getline(ifs, lineFo);
+                            stringstream ssFo(lineFo);
+                            string N;
+                            ssFo >> N;
+                            int len = N.length();
+                            string s1="merlin";
+                            string s2="Merlin";
+                            size_t t1 = N.find(s1);
+                            size_t t2 = N.find(s2);
+                            if ( (t1 != string::npos) || (t2!= string::npos)){
+                                    HP +=3;
+                                    if(HP > MaxHP){HP = MaxHP;}
+                                }else if(ContainMerlin(N)){
+                                    HP +=2;
+                                    if(HP > MaxHP){HP = MaxHP;}
+                            }
+                            
+                        }              
+                    MarkMerlin = 1;
+                }
+                else if(KoopaEvent == "19" && MarkAclepius != 1){
+                    ifstream ifs;
+                    ifs.open(pack2, ios::in);
+                    //! line 1
+                    string line1;
+                    getline(ifs, line1);
                     stringstream ss1(line1);
-                int N1;
-                ss1 >> N1;
-
-                //! line 2
-                string line2;
-                getline(ifs, line2);
-                stringstream ss2(line2);
-                int N2;
-                ss2 >> N2;
-
-                for (int j = 0; j < N2; j++)
-                {
-                    string lineFollowing;
-                    getline(ifs, lineFollowing);
-                    stringstream ssFollow(lineFollowing);
-                    int NN;
-                    int CountPotion = 0;
-                    while (ssFollow >> NN)
+                    int N1;
+                    ss1 >> N1;
+                    //! line 2
+                    string line2;
+                    getline(ifs, line2);
+                    stringstream ss2(line2);
+                    int N2;
+                    ss2 >> N2; 
+                    for (int j = 0; j < N2; j++)
                     {
-                        if (NN == 16 && CountPotion < 3 && remedy < 99)
+                        string lineFollowing;
+                        getline(ifs, lineFollowing);
+                        stringstream ssFollow(lineFollowing);
+                        int NN;
+                        int CountPotion = 0;
+                        while (ssFollow >> NN)
                         {
-                            if (TinyFormCheck(i, tinySmall))
+                            if (NN == 16 && CountPotion < 3 && remedy < 99)
                             {
-                                HP = HP * 5;
-                                tinySmall =0;
-                                if (HP > MaxHP)
+                                if (TinyFormCheck(i, tinySmall))
                                 {
-                                    HP = MaxHP;
+                                    HP = HP * 5;
+                                    tinySmall =0;
+                                    if (HP > MaxHP)
+                                    {
+                                        HP = MaxHP;
+                                    }
+                                }
+                                else
+                                {
+                                    CountPotion++;
+                                    remedy++;
                                 }
                             }
-                            else
+                            else if (NN == 17 && CountPotion < 3 && maidenkiss < 99)
                             {
-                                CountPotion++;
-                                remedy++;
-                            }
-                        }
-                        else if (NN == 17 && CountPotion < 3 && maidenkiss < 99)
-                        {
-                            if (FrogFormCheck(i, turnFrog))
-                            {
-                                if (CurrentLevell != 0)
+                                if (FrogFormCheck(i, turnFrog))
                                 {
-                                    level = CurrentLevell;
-                                    turnFrog = 0;
+                                    if (CurrentLevell != 0)
+                                    {
+                                        level = CurrentLevell;
+                                        turnFrog = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    maidenkiss++;
+                                    CountPotion++;
                                 }
                             }
-                            else
+                            else if (NN == 18 && CountPotion < 3 && phoenixdown < 99)
                             {
-                                maidenkiss++;
+                                phoenixdown++;
                                 CountPotion++;
                             }
                         }
-                        else if (NN == 18 && CountPotion < 3 && phoenixdown < 99)
-                        {
-                            phoenixdown++;
-                            CountPotion++;
-                        }
+                    }
+                    MarkAclepius++;
+                }
+                
+            }
+        if( MaxHP==999|| (isPrime(MaxHP) && level==8 ) || level==10){
+            // skip all monster
+        }
+        else 
+        {
+            if (KoopaEvent == "1" || KoopaEvent == "2" || KoopaEvent == "3" || KoopaEvent == "4" || KoopaEvent == "5")
+            {
+
+                ComBat(level, HP, i, KoopaEvent);
+
+                if (HP <= 0 && phoenixdown == 0)
+                {
+                    rescue = 0;
+                }
+                else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
+                {
+                    phoenixdown--;
+                    HP = MaxHP;
+                    tinySmall = 0;
+                }
+                else if (HP < 0 && phoenixdown != 0)
+                {
+                    phoenixdown -= 1;
+                    HP = MaxHP;
+                }
+            }
+            else if (KoopaEvent == "6" && (!TinyFormCheck(i, tinySmall) || !FrogFormCheck(i, turnFrog))){
+                tinySmall = i;
+                int b = i % 10;
+                int levelO = i > 6 ? (b > 5 ? b : 5) : b;
+                if (level > levelO)
+                {
+                    if (level == 10 || level==9)
+                    {
+                    }
+                    else
+                    {
+                        level += 2;
                     }
                 }
-                MarkAclepius++;
-            }
-            else if (KoopaEvent == "18" && MarkMerlin != 1)
-            {
-                ifstream ifs;
-                ifs.open(pack3);
-
-                //! Line 1
-                string linee;
-                getline(ifs, linee);
-                stringstream ss(linee);
-                int N1;
-                ss >> N1;
-
-                
-                    for (int j = 0; j < N1; j++)
-                    {
-                        string lineFo;
-                        getline(ifs, lineFo);
-                        stringstream ssFo(lineFo);
-                        string N;
-                        ssFo >> N;
-                        int len = N.length();
-                        string s1="merlin";
-                        string s2="Merlin";
-                        size_t t1 = N.find(s1);
-                        size_t t2 = N.find(s2);
-                        if ( (t1 != string::npos) || (t2!= string::npos)){
-                                HP +=3;
-                                if(HP > MaxHP){HP = MaxHP;}
-                            }else if(ContainMerlin(N)){
-                                HP +=2;
-                                if(HP > MaxHP){HP = MaxHP;}
-                        }
-                        
+                else if (level == levelO)
+                {
+                }
+                else
+                {
+                    if(HP<=5){HP=1;}
+                    else {HP=HP/5;}
+                    if (remedy>0){
+                        HP=HP*5;
+                        remedy--;
+                        tinySmall=0;
                     }
-                
-                MarkMerlin = 1;
+                }
             }
-
-            if (HP <= 0 && phoenixdown == 0)
-            {
-                rescue = 0;
-            }
-            else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
-            {
-                phoenixdown--;
-                HP = MaxHP;
-                tinySmall = 0;
-            }
-            else if (HP < 0 && phoenixdown != 0)
-            {
-                phoenixdown -= 1;
-                HP = MaxHP;
-            }
-        }
-        else if (KoopaEvent == "11")
-        {
-            int n1 = ((level + phoenixdown) % 5 + 1) * 3;
-            int s1 = calcS1(n1);
-            HP += s1 % 100;
-            while (!isPrime(HP))
-            {
-                HP++;
-            }
-            if (HP > MaxHP)
-            {
-                HP = MaxHP;
+            else if(KoopaEvent == "7" && (!TinyFormCheck(i, tinySmall) || !FrogFormCheck(i, turnFrog))){
+                 turnFrog = i;
+                int b = i % 10;
+                int levelO = i > 6 ? (b > 5 ? b : 5) : b;
+                if (level > levelO)
+                {
+                    if (level == 10 || level == 9 )
+                    {
+                    }
+                    else
+                    {
+                        level += 2;
+                    }
+                }
+                else if (level == levelO)
+                {
+                }
+                else
+                {
+                    currentLevel(CurrentLevell,level);
+                    level=1;
+                    if(maidenkiss>0){
+                        level= CurrentLevell;
+                        maidenkiss--;
+                        turnFrog=0;
+                    }
+                }
             }
         }
-        else if (KoopaEvent == "12")
-        {
-            HP = updateHP(HP);
-            if (HP > MaxHP)
-            {
-                HP = MaxHP;
-            }
-        }
-
         i++;
-
         if (fullFrogCheck(i, turnFrog))
         {
-            if (CurrentLevell == 0)
-            {
-            }
-            else
-            {
                 level = CurrentLevell;
                 CurrentLevell = 0;
                 turnFrog = 0;
-            }
+           
         }
         if (fullTinyCheck(i, tinySmall))
         {
             HP *= 5;
-            if (HP > MaxHP)
-                HP = MaxHP;
-        }
-
-        if (HP <= 0)
-        {
-            rescue = 0;
-        }
-        else if (i - 1 == countEvent && HP > 0)
-        {
-            rescue = 1;
-        }
-        else
-        {
-            rescue = -1;
-        }
-
-        if (KoopaEvent == "0" || HP < 0 || HP == 999 || ((isPrime(MaxHP)) && level == 8))
-        {
-            if (HP < 0)
-            {
-                rescue = 0;
+            if (HP > MaxHP){
+                HP=MaxHP;
             }
-            else
-            {
-                rescue = 1;
+            tinySmall=0;
+        }
+        if ( HP<0 || i-countEvent-1==0){
+            if ( HP<0){
+                rescue=-1;
+            }
+            else if (i-countEvent-1==0){
+                rescue=1;
             }
             display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
             break;
         }
+        rescue=-1;
         display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
+
     }
 }
 
 int main(int argc, char **argv)
 {
     string file_input("tc1_input");
-
     int HP, level, remedy, maidenkiss, phoenixdown, rescue;
     adventureToKoopa(file_input, HP, level, remedy, maidenkiss, phoenixdown, rescue);
-
     return 0;
-}
+}   
+
+
