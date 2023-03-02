@@ -8,19 +8,6 @@ using namespace std;
 
 bool ContainMerlin(string s)
 {
-    // for (int i = 0; i < 6; i++)
-    // {
-    //     if (tolower(s[i]) == 'm' &&
-    //         tolower(s[i + 1]) == 'e' &&
-    //         tolower(s[i + 2]) == 'r' &&
-    //         tolower(s[i + 3]) == 'l' &&
-    //         tolower(s[i + 4]) == 'i' &&
-    //         tolower(s[i + 5]) == 'n')
-    //     {
-    //         return true;
-    //     }
-    // }
-    // return false;
     int len = s.length();
     for( int i=0; i < len ;i++){
         s[i] = tolower(s[i]);
@@ -222,57 +209,16 @@ int MaxPosValueInSequence(int numbers[], int num_elemnts)
     }
     return summit_pos + summit_value;
 }
-// int MaxValueInSequence(int *numbers, int num_elements)
-// {
-//     int summit_pos = 0;
-//     int summit_value = 0;
-//     int initial = numbers[0];
-//     int countLegit = 0;
-//     int notGoDownHill = 0;
 
-//     for (int i = 1; i < num_elements; i++)
-//     {
-
-//         if (numbers[i] > initial)
-//         {
-//             initial = numbers[i];
-//             summit_pos = i;
-//             summit_value = numbers[i];
-//             notGoDownHill = 1;
-//             if (countLegit == 1)
-//             {
-
-//                 summit_pos = -3;
-//                 summit_value = -2;
-//                 break;
-//             }
-//         }
-//         else if (numbers[i] == initial)
-//         {
-//         }
-//         else
-//         {
-//             if (notGoDownHill)
-//             {
-//                 initial = numbers[i];
-//                 countLegit = 1;
-//             }
-//             else
-//             {
-//                 summit_pos = 0;
-//                 summit_value = initial;
-//             }
-//         }
-//     }
-//     return summit_value;
-// }
 
 int numElementss(string filename)
 {
     ifstream fileInput(filename);
     string line;
     getline(fileInput, line);
+    fileInput.close();
     return stoi(line);
+    
 }
 
 void ExtractNumMush(string filename, int numbers[])
@@ -401,7 +347,6 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     getline(ifs, line);
     stringstream ss(line);
     ss >> HP >> level >> remedy >> maidenkiss >> phoenixdown;
-
     //?line 2
     string line2, line22;
     getline(ifs, line2);
@@ -412,7 +357,6 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     {
         countEvent++;
     }
-
     //! line 3
     string line3;
     getline(ifs, line3);
@@ -490,17 +434,19 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                         {
                             HP = HP - ModifiedSequence2(N1, numm);
                         }
+                        
                         if (HP <= 0 && phoenixdown == 0)
                         {
                             rescue = 0;
                             display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         }
-                        else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
+                        else if (HP <= 0 && phoenixdown != 0 && (TinyFormCheck(i, tinySmall)|| FrogFormCheck(i, turnFrog)))
                         {
                             phoenixdown--;
                             HP = MaxHP;
                             tinySmall = 0;
+                            turnFrog =0;
                         }
                         else if (HP <= 0 && phoenixdown != 0)
                         {
@@ -525,7 +471,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                     }
                 }
                 else if (KoopaEvent=="16"){
-                    if (TinyFormCheck(i, turnFrog))
+                    if (FrogFormCheck(i, turnFrog))
                     {
                         level = CurrentLevell;
                         turnFrog=0;
@@ -572,6 +518,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                             
                         }              
                     MarkMerlin = 1;
+                    ifs.close();
                 }
                 else if(KoopaEvent == "19" && MarkAclepius != 1){
                     ifstream ifs;
@@ -638,6 +585,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                         }
                     }
                     MarkAclepius++;
+                    ifs.close();
                 }
                 
             }
@@ -655,15 +603,16 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                 {
                     rescue = 0;
                 }
-                else if (HP <= 0 && phoenixdown != 0 && TinyFormCheck(i, tinySmall))
+                else if (HP <= 0 && phoenixdown != 0 && (TinyFormCheck(i, tinySmall)|| FrogFormCheck(i, turnFrog)))
                 {
                     phoenixdown--;
                     HP = MaxHP;
                     tinySmall = 0;
+                    turnFrog=0;
                 }
                 else if (HP < 0 && phoenixdown != 0)
                 {
-                    phoenixdown -= 1;
+                    phoenixdown --;
                     HP = MaxHP;
                 }
             }
@@ -715,12 +664,19 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                 }
                 else
                 {
-                    currentLevel(CurrentLevell,level);
-                    level=1;
+                    // currentLevel(CurrentLevell,level);
+                    // level=1;
+                    // if(maidenkiss>0){
+                    //     level= CurrentLevell;
+                    //     maidenkiss--;
+                    //     turnFrog=0;
+                    // }
                     if(maidenkiss>0){
-                        level= CurrentLevell;
                         maidenkiss--;
                         turnFrog=0;
+                    }else{
+                        currentLevel(CurrentLevell,level);
+                        level=1;
                     }
                 }
             }
