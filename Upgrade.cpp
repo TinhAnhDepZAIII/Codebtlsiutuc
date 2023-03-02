@@ -132,11 +132,11 @@ int sumMinMaxPosition(int numbers[], int num_elements)
     int max = 0, min = 0;
     for (int i = 1; i < num_elements; i++)
     {
-        if (numbers[i] > numbers[max])
+        if (numbers[i] >= numbers[max])
         {
             max = i;
         }
-        if (numbers[i] < numbers[min])
+        if (numbers[i] <= numbers[min])
         {
             min = i;
         }
@@ -444,6 +444,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                     int n1 = ((level + phoenixdown) % 5 + 1) * 3;
                     int s1 = calcS1(n1);
                     HP += s1 % 100;
+                    if(isPrime(HP)){HP++;}
                     while (!isPrime(HP))
                     {
                         HP++;
@@ -506,6 +507,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
                             phoenixdown -= 1;
                             HP = MaxHP;
                         }
+                        if(HP>MaxHP){HP=MaxHP;}
                     }
                     if(HP<=0){break;}
                 }
